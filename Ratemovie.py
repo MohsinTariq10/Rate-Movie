@@ -13,6 +13,7 @@ import urllib
 import urllib2
 import xml.etree.ElementTree as ET
 import cmd
+import os.path
 
 DESCRIPTION = ""
 SEARCH_URL = "http://www.omdbapi.com/?s={}&r=XML"
@@ -47,7 +48,7 @@ class RateMovie(cmd.Cmd):
         directories = filter(lambda file:os.path.isdir(file),allfiles)
         for d in directories:
             webpage = getresult(SEARCH_URL.format(urllib.quote(d)))
-            xmlfile = os.getcwd()+"/" + d +"/.xml"
+            xmlfile = os.curdir + os.sep + d + os.sep + os.extsep +"xml"
             file = open(xmlfile, 'w+')
             file.write(webpage)
             file.close()
@@ -56,7 +57,7 @@ class RateMovie(cmd.Cmd):
             if root.attrib["response"]== "True":
                 try:
                     name = root[0].attrib["imdbRating"] or ""
-                    os.rename(os.getcwd()+"/" + d ,os.getcwd()+"/" +name+ d)
+                    os.rename(os.curdir + os.sep + d ,os.getcwd()+ os.sep +name+ d)
                 except:
                     pass
 
