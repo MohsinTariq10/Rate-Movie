@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 ##################################################
 #
@@ -12,9 +12,58 @@ import argparse
 import urllib
 import urllib2
 import xml.etree.ElementTree as ET
+import cmd
 
 DESCRIPTION = ""
 SEARCH_URL = "http://www.omdbapi.com/?s={}&r=XML"
+PATH = ""
+
+class RateMovie(cmd.Cmd):
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        self.prompt = ">>"
+
+    def do_list(self,args):
+        """lists all the directories"""
+        os.system("ls")
+
+    def do_movies(self,args):
+        """lists all the movies"""
+        allfiles = os.listdir(PATH)
+        movies = filter(lambda file:os.path.isdir(file) and ".xml" in os.listdir(file),allfiles)
+        if movies == "":
+            print ("Either You Don't have movies or you have not rated the movies. See help")
+        else:
+            for d in movies:
+                print ( d)
+
+    def do_ratings(self,args):
+        """lists all the ratings"""
+        print("all the ratings here")
+
+    def do_rate(self,args):
+        allfiles = os.listdir(PATH)
+        directories = filter(lambda file:os.path.isdir(file),allfiles)
+        for d in directories:
+            webpage = getresult(SEARCH_URL.format(urllib.quote(d)))
+            xmlfile = os.getcwd()+"/" + d +"/.xml"
+            file = open(xmlfile, 'w+')
+            file.write(webpage)
+            file.close()
+            tree = ET.parse(xmlfile)
+            root = tree.getroot()
+            if root.attrib["response"]== "True":
+                try:
+                    name = root[0].attrib["imdbRating"] or ""
+                    os.rename(os.getcwd()+"/" + d ,os.getcwd()+"/" +name+ d)
+                except:
+                    pass
+
+    def do_quit(self,args):
+        """quits the program"""
+        print("Good Bye !!!")
+        return True
+
 
 def argparsing(parser):
     parser.add_argument("--verbose","-v",action="store_true",help="increase output verbosity", default="false")
@@ -22,36 +71,15 @@ def argparsing(parser):
     return parser
 
 def getresult(url):
-    print url
+    print (url)
     result = urllib.urlopen(url)
     return result.read()
 
-def dirlist(arg):
-    os.chdir(arg.moviesdir)
-    allfiles = os.listdir(os.getcwd())
-    return filter(lambda file:os.path.isdir(file),allfiles)
-
-
-
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser = argparsing(parser)
     arg = parser.parse_args()
-
-    directories = dirlist(arg)
-    for d in directories:
-        webpage = getresult(SEARCH_URL.format(urllib.quote(d)))
-        xmlfile = os.getcwd()+"/" + d +"/.xml"
-        file = open(xmlfile, 'w+')
-        file.write(webpage)
-        file.close()
-        tree = ET.parse(xmlfile)
-        root = tree.getroot()
-        if root.attrib["response"]== "True":
-            try:
-                name = root[0].attrib["imdbRating"] or ""
-                os.rename(os.getcwd()+"/" + d ,os.getcwd()+"/" +name+ d)
-            except:
-                pass
-if __name__ == "__main__":
-    main()
+    PATH = arg.moviesdir
+    os.chdir(PATH)
+    rm = RateMovie()
+    rm.cmdloop()
