@@ -2,7 +2,7 @@
 
 ##################################################
 #
-# RateMovie - a command line tool for sorting movies.
+# RateMovie - a command line tool for rating movies.
 # written by Mohsin Tariq (mohsin.tariq10@gmail.com)
 #
 ##################################################
@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 import cmd
 import os.path
 
-DESCRIPTION = ""
+DESCRIPTION = "RateMovie - a command line tool for rating movies"
 SEARCH_URL = "http://www.omdbapi.com/?s={}&r=XML"
 PATH = ""
 
