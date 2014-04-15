@@ -40,7 +40,9 @@ class RateMovie(cmd.Cmd):
 
     def do_ratings(self,args):
         """lists all the ratings"""
-        print("all the ratings here")
+        allfiles = os.listdir(PATH)
+        movies = filter(lambda file:os.path.isdir(file) and ".xml" in os.listdir(file),allfiles)
+        print (sorted (movies,reverse = True))
 
     def do_rate(self,args):
         """rates the movies directories according to imdb ratings"""
