@@ -16,7 +16,7 @@ import cmd
 import os.path
 
 DESCRIPTION = "RateMovie - a command line tool for rating movies"
-SEARCH_URL = "http://www.omdbapi.com/?s={}&r=XML"
+SEARCH_URL = "http://www.omdbapi.com/?t={}&r=XML"
 PATH = ""
 
 class RateMovie(cmd.Cmd):
