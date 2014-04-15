@@ -43,7 +43,7 @@ class RateMovie(cmd.Cmd):
         print("all the ratings here")
 
     def do_rate(self,args):
-        """rates the movies according to imdb ratings"""
+        """rates the movies directories according to imdb ratings"""
         allfiles = os.listdir(PATH)
         directories = filter(lambda file:os.path.isdir(file),allfiles)
         for d in directories:
@@ -57,9 +57,23 @@ class RateMovie(cmd.Cmd):
             if root.attrib["response"]== "True":
                 try:
                     name = root[0].attrib["imdbRating"] or ""
-                    os.rename(os.curdir + os.sep + d ,os.getcwd()+ os.sep +name+ d)
+                    os.rename(os.curdir + os.sep + d ,os.getcwd()+ os.sep +name+ " "+ d)
                 except:
                     pass
+
+    def do_remove(self,args):
+        """removes ratings from the directory names"""
+        allfiles = os.listdir(PATH)
+        directories = filter(lambda file:os.path.isdir(file),allfiles)
+        for d in directories:
+            if self.israted(d):
+                os.rename(d,d [4:])
+
+    def israted(self,name):
+        if name[0].isalnum() and name[1] == "." and name[2].isalnum():
+            return True
+        return False
+
 
     def do_quit(self,args):
         """quits the program"""
